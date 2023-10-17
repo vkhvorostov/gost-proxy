@@ -1,0 +1,8 @@
+target_server_url: "http://127.0.0.1:8001"
+response_excluded_headers:
+  - date
+  - server
+  - content-length
+request_included_headers:
+  - content-type
+  - authorization
