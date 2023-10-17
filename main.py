@@ -5,7 +5,8 @@ import yaml
 import os
 
 app = FastAPI()
-logger = logging.getLogger("uvicorn.access")
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format='%(levelname)s:     %(name)s - %(asctime)s - %(message)s')
 
 # Load the configuration from the YAML file
 config_path = os.getenv("CONFIG_PATH", "config.yaml")
@@ -14,7 +15,7 @@ with open(config_path, "r") as config_file:
 
 target_server_url = config.get("target_server_url")
 excluded_headers = config.get("response_excluded_headers", [])
-included_header = config.get("request_included_header", [])
+included_headers = config.get("request_included_headers", [])
 
 @app.get("/{path:path}")
 @app.post("/{path:path}")
@@ -27,7 +28,8 @@ async def proxy(path: str, request: Request):
 
         headers = {}
         for header, value in request.headers.items():
-            headers[header] = value
+            if header in included_headers:
+                headers[header] = value
         
         logger.info(f"Target request: {request.method} {target_url} {headers}")
         response = await client.request(
