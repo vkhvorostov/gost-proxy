@@ -6,3 +6,6 @@ response_excluded_headers:
 request_included_headers:
   - content-type
   - authorization
+mode: server
+alg: kuznechik
+key: 8899aabbccddeeff0011223344556677fedcba98765432100123456789abcdef
