@@ -56,9 +56,17 @@ async def proxy(path: str, request: Request):
             headers=headers,
             content=converted_body,
         )
-        logger.debug(f"Response: {response.content}")
 
-        proxy_response = Response(content=response.content, status_code=response.status_code)
+        if mode == 'client':
+            logger.debug(f"Response cipherbody: {response.content.hex()}")
+            converted_body = cipher.decrypt(response.content)
+            logger.debug(f"Response plainbody: {converted_body}")
+        elif mode == 'server':
+            logger.debug(f"Response plainbody: {response.content}")
+            converted_body = cipher.encrypt(response.content)
+            logger.debug(f"Response cipherbody: {converted_body.hex()}")
+
+        proxy_response = Response(content=converted_body, status_code=response.status_code)
         for header, value in response.headers.items():
             if not header in excluded_headers:
                 proxy_response.headers[header] = value
