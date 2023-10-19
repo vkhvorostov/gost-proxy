@@ -34,3 +34,30 @@
 Запуск в режиме proxy-server:
 
 `CONFIG_PATH=server.yaml uvicorn main:app`
+
+## Пример конфигурационного файла
+
+```
+target_server_url: "http://127.0.0.1:8001"
+response_excluded_headers:
+  - date
+  - server
+  - content-length
+request_included_headers:
+  - content-type
+  - authorization
+mode: client
+alg: kuznechik
+key: 8899aabbccddeeff0011223344556677fedcba98765432100123456789abcdef
+```
+
+- **target_server_url:** url куда прокси перенаправляет запросы - для прокси-клиента должен указывать на прокси-сервер, для прокси-сервера должен указывать на конечный апи-ендпоинт
+- **response_excluded_headers:** исключаемые из проксирования ответа http-заголовки (обычно те, которые добавляет по-умолчанию сам прокси: date, server, content-length)
+- **request_included_headers:** проксируемые заголовки запроса клиента (не перчисленные здесь проксироваться не будут)
+- **mode:** server или client
+- **alg:** kuznechik или magma
+- **key:** ключ длиной 256 бит - строка в 16-ричном формате, как в контрольных примерах ГОСТ 34.12-2018
+
+## Тесты
+
+Для проверки корректности реализации алгоритмов шифрования можно просмотреть и запустить `python3 test.py`
